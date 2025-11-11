@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Markdown Live — Mermaid & PlantUML</title>
+  <title>Markdown Live Slides — Mermaid & PlantUML</title>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -50,6 +50,10 @@
       overflow-x: hidden;
     }
 
+    body {
+      transition: all 0.5s ease;
+    }
+
     /* Background Pattern */
     body::before {
       content: '';
@@ -62,7 +66,7 @@
         radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 80% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 50% 100%, rgba(245, 158, 11, 0.1) 0%, transparent 50%);
-      z-index: -1;
+      z-index: -2;
       animation: float 20s ease-in-out infinite;
     }
 
@@ -71,30 +75,31 @@
       50% { opacity: 1; }
     }
 
-    /* Header */
-    header {
+    /* Controls Header */
+    .controls {
       position: sticky;
       top: 0;
       z-index: 100;
       backdrop-filter: blur(20px) saturate(1.5);
-      background: linear-gradient(to right, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
+      background: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
       border-bottom: 1px solid var(--border);
-      padding: 1rem 0;
+      padding: 0.75rem 0;
       box-shadow: var(--shadow-md);
     }
 
-    .header-content {
-      max-width: 1400px;
+    .controls-content {
+      max-width: 1600px;
       margin: 0 auto;
       padding: 0 2rem;
       display: flex;
       gap: 1.5rem;
       align-items: center;
+      justify-content: space-between;
       flex-wrap: wrap;
     }
 
     .logo {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 700;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       -webkit-background-clip: text;
@@ -107,7 +112,7 @@
 
     .logo::before {
       content: '⚡';
-      font-size: 1.75rem;
+      font-size: 1.5rem;
       animation: pulse 2s ease-in-out infinite;
     }
 
@@ -116,21 +121,63 @@
       50% { transform: scale(1.1); opacity: 0.8; }
     }
 
+    .slide-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .slide-counter {
+      background: var(--bg-card);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+    }
+
+    .slide-title {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      max-width: 400px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: var(--bg-tertiary);
+      border-radius: 2px;
+      overflow: hidden;
+      flex: 2;
+      max-width: 300px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
     .input-group {
       flex: 1;
-      min-width: 300px;
+      min-width: 250px;
       position: relative;
     }
 
     .input-group input {
       width: 100%;
-      padding: 0.875rem 1.25rem;
-      padding-left: 3rem;
-      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      padding-left: 2.5rem;
+      border-radius: 10px;
       border: 1px solid var(--border);
       background: var(--bg-card);
       color: var(--text-primary);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       transition: all 0.3s ease;
       backdrop-filter: blur(10px);
     }
@@ -145,27 +192,26 @@
     .input-group::before {
       content: '📄';
       position: absolute;
-      left: 1rem;
+      left: 0.75rem;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       opacity: 0.6;
     }
 
     .button-group {
       display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
+      gap: 0.5rem;
     }
 
     .btn {
-      padding: 0.875rem 1.5rem;
-      border-radius: 12px;
+      padding: 0.65rem 1.25rem;
+      border-radius: 10px;
       border: 1px solid var(--border);
       background: var(--bg-card);
       color: var(--text-primary);
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       cursor: pointer;
       transition: all 0.3s ease;
       backdrop-filter: blur(10px);
@@ -207,166 +253,174 @@
       transform: translateY(-2px) scale(1.05);
     }
 
-    /* Main Content */
-    main {
-      max-width: 1400px;
-      margin: 2rem auto;
-      padding: 0 2rem 4rem;
+    .btn-icon {
+      padding: 0.65rem;
+      min-width: 44px;
+      justify-content: center;
     }
 
-    .status {
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-bottom: 2rem;
-      text-align: center;
-      font-weight: 500;
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--border);
+    /* Slide Container */
+    .slides-container {
+      max-width: 1600px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+      min-height: calc(100vh - 200px);
+      position: relative;
+    }
+
+    .slide {
+      display: none;
       animation: slideIn 0.5s ease-out;
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      padding: 3rem;
+      box-shadow: var(--shadow-md);
+      min-height: 600px;
+    }
+
+    .slide.active {
+      display: block;
     }
 
     @keyframes slideIn {
       from {
         opacity: 0;
-        transform: translateY(-20px);
+        transform: translateX(50px);
       }
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateX(0);
       }
     }
 
-    .status.loading {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
-      border-color: var(--primary);
-    }
-
-    .status.loading::after {
-      content: '⏳';
-      margin-left: 0.5rem;
-      animation: spin 2s linear infinite;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .status.error {
-      background: rgba(239, 68, 68, 0.1);
-      border-color: var(--danger);
-      color: #fecaca;
-    }
-
-    .status.error::before {
-      content: '⚠️';
-      margin-right: 0.5rem;
-    }
-
-    /* Article/Content */
-    #content {
-      animation: fadeIn 0.6s ease-out;
-    }
-
-    @keyframes fadeIn {
+    @keyframes slideOut {
       from {
-        opacity: 0;
-        transform: translateY(20px);
+        opacity: 1;
+        transform: translateX(0);
       }
       to {
-        opacity: 1;
-        transform: translateY(0);
+        opacity: 0;
+        transform: translateX(-50px);
       }
     }
 
-    #content h1,
-    #content h2,
-    #content h3,
-    #content h4 {
-      margin-top: 2.5rem;
-      margin-bottom: 1rem;
+    .slide.slide-out {
+      animation: slideOut 0.5s ease-out;
+    }
+
+    /* Content Styles */
+    .slide h1,
+    .slide h2,
+    .slide h3,
+    .slide h4 {
+      margin-top: 0;
+      margin-bottom: 1.5rem;
       background: linear-gradient(135deg, var(--text-primary), var(--secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
 
-    #content h1 {
+    .slide h1 {
       font-size: 2.5rem;
       margin-top: 0;
       border-bottom: 2px solid var(--border);
-      padding-bottom: 1rem;
+      padding-bottom: 1.5rem;
     }
 
-    #content h2 {
+    .slide h1::before {
+      content: '🎯';
+      font-size: 2.5rem;
+    }
+
+    .slide h2 {
       font-size: 2rem;
     }
 
-    #content h3 {
+    .slide h2::before {
+      content: '📌';
+      font-size: 2rem;
+    }
+
+    .slide h3 {
       font-size: 1.5rem;
     }
 
-    #content h4 {
+    .slide h3::before {
+      content: '🔸';
+      font-size: 1.5rem;
+    }
+
+    .slide h4 {
       font-size: 1.25rem;
     }
 
-    #content p {
-      margin-bottom: 1.25rem;
+    .slide h4::before {
+      content: '▸';
+      font-size: 1.25rem;
+    }
+
+    .slide p {
+      margin-bottom: 1.5rem;
       color: var(--text-secondary);
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       line-height: 1.8;
     }
 
-    #content strong {
+    .slide strong {
       color: var(--text-primary);
       font-weight: 600;
     }
 
-    #content em {
+    .slide em {
       color: var(--secondary);
       font-style: normal;
       font-weight: 500;
     }
 
     /* Blockquotes */
-    #content blockquote {
+    .slide blockquote {
       margin: 2rem 0;
       padding: 1.5rem 2rem;
       border-left: 4px solid var(--primary);
-      background: var(--bg-card);
+      background: rgba(139, 92, 246, 0.1);
       border-radius: 8px;
       backdrop-filter: blur(10px);
       box-shadow: var(--shadow-sm);
     }
 
-    #content blockquote p {
+    .slide blockquote p {
       margin: 0;
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 500;
       color: var(--text-primary);
     }
 
     /* Tables */
-    #content table {
+    .slide table {
       width: 100%;
       border-collapse: collapse;
       margin: 2rem 0;
-      background: var(--bg-card);
+      background: var(--bg-tertiary);
       border-radius: 12px;
       overflow: hidden;
-      backdrop-filter: blur(10px);
       box-shadow: var(--shadow-sm);
     }
 
-    #content th,
-    #content td {
+    .slide th,
+    .slide td {
       padding: 1rem;
       text-align: left;
       border-bottom: 1px solid var(--border);
     }
 
-    #content th {
+    .slide th {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
       font-weight: 600;
@@ -375,34 +429,35 @@
       letter-spacing: 0.5px;
     }
 
-    #content tr:last-child td {
+    .slide tr:last-child td {
       border-bottom: none;
     }
 
-    #content tr:hover {
+    .slide tr:hover {
       background: rgba(139, 92, 246, 0.1);
     }
 
     /* Lists */
-    #content ul,
-    #content ol {
+    .slide ul,
+    .slide ol {
       margin: 1.5rem 0;
       padding-left: 2rem;
     }
 
-    #content li {
+    .slide li {
       margin-bottom: 0.75rem;
       color: var(--text-secondary);
       line-height: 1.8;
+      font-size: 1.05rem;
     }
 
-    #content ul li::marker {
+    .slide ul li::marker {
       color: var(--primary);
       font-size: 1.2rem;
     }
 
     /* Code Blocks */
-    pre {
+    .slide pre {
       background: var(--bg-tertiary) !important;
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -414,7 +469,7 @@
       box-shadow: var(--shadow-md);
     }
 
-    pre::before {
+    .slide pre::before {
       content: '</>';
       position: absolute;
       top: 0.5rem;
@@ -425,26 +480,33 @@
       opacity: 0.5;
     }
 
-    code {
+    .slide code {
       font-family: 'JetBrains Mono', 'Courier New', monospace;
       font-size: 0.95rem;
       color: var(--text-primary);
     }
 
     /* Mermaid Diagrams */
-    #content .mermaid {
+    .slide .mermaid {
       margin: 2.5rem 0;
       padding: 2rem;
-      background: var(--bg-card);
+      background: var(--bg-tertiary);
       border-radius: 12px;
       border: 1px solid var(--border);
       backdrop-filter: blur(10px);
       box-shadow: var(--shadow-md);
       overflow-x: auto;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .slide .mermaid:hover {
+      box-shadow: var(--shadow-glow);
+      transform: scale(1.01);
     }
 
     /* PlantUML Images */
-    #content img {
+    .slide img {
       max-width: 100%;
       height: auto;
       margin: 2rem 0;
@@ -455,79 +517,166 @@
       cursor: pointer;
     }
 
-    #content img:hover {
+    .slide img:hover {
       transform: scale(1.02);
       box-shadow: var(--shadow-glow-cyan);
       border-color: var(--secondary);
     }
 
     /* Links */
-    #content a {
+    .slide a {
       color: var(--secondary);
       text-decoration: none;
       border-bottom: 1px solid transparent;
       transition: all 0.3s ease;
-      position: relative;
     }
 
-    #content a:hover {
+    .slide a:hover {
       color: var(--primary);
       border-bottom-color: var(--primary);
     }
 
-    #content a::after {
-      content: '↗';
-      margin-left: 0.25rem;
-      font-size: 0.85em;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    #content a:hover::after {
-      opacity: 1;
-    }
-
-    /* Emojis */
-    #content p:has(.emoji),
-    #content h1:has(.emoji),
-    #content h2:has(.emoji),
-    #content h3:has(.emoji) {
+    /* Navigation Arrows */
+    .nav-arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      z-index: 50;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      justify-content: center;
     }
 
-    /* Footer Note */
-    .diagram-note {
-      text-align: center;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-top: -1rem;
-      margin-bottom: 2rem;
-      padding: 1rem;
-      background: var(--bg-card);
-      border-radius: 8px;
-      border: 1px solid var(--border);
+    .nav-arrow:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .nav-arrow.prev {
+      left: 2rem;
+    }
+
+    .nav-arrow.next {
+      right: 2rem;
+    }
+
+    /* Status */
+    .status {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 1rem 2rem;
+      border-radius: 12px;
       backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      animation: slideUp 0.5s ease-out;
+      z-index: 100;
     }
 
-    .diagram-note code {
-      background: var(--bg-tertiary);
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.85rem;
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
     }
 
-    /* Hidden Class */
-    .hidden {
-      display: none !important;
+    .status.loading {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+      border-color: var(--primary);
+    }
+
+    .status.error {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--danger);
+      color: #fecaca;
+    }
+
+    /* Diagram Fullscreen Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .modal.active {
+      display: flex;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+      max-width: 95%;
+      max-height: 95%;
+      position: relative;
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      padding: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 0 50px rgba(139, 92, 246, 0.5);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--danger);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+
+    .modal-close:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px var(--danger);
+    }
+
+    .modal-content svg,
+    .modal-content img {
+      max-width: 100%;
+      height: auto;
+      display: block;
     }
 
     /* Responsive */
-    @media (max-width: 768px) {
-      .header-content {
+    @media (max-width: 1024px) {
+      .controls-content {
         padding: 0 1rem;
         flex-direction: column;
+      }
+
+      .slide-info {
+        order: -1;
+        width: 100%;
       }
 
       .input-group {
@@ -537,27 +686,29 @@
 
       .button-group {
         width: 100%;
-        justify-content: stretch;
+        justify-content: center;
       }
 
-      .btn {
-        flex: 1;
+      .nav-arrow {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
       }
 
-      main {
-        padding: 0 1rem 4rem;
+      .nav-arrow.prev {
+        left: 1rem;
       }
 
-      #content h1 {
-        font-size: 2rem;
+      .nav-arrow.next {
+        right: 1rem;
       }
 
-      #content h2 {
-        font-size: 1.75rem;
+      .slides-container {
+        padding: 0 1rem;
       }
 
-      #content h3 {
-        font-size: 1.5rem;
+      .slide {
+        padding: 2rem;
       }
     }
 
@@ -587,11 +738,27 @@
       color: white;
     }
 
-    /* Focus Visible */
-    .btn:focus-visible,
-    input:focus-visible {
-      outline: 2px solid var(--primary);
-      outline-offset: 2px;
+    /* Keyboard Shortcuts Help */
+    .keyboard-help {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      backdrop-filter: blur(10px);
+      font-size: 0.85rem;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+
+    .keyboard-help:hover {
+      opacity: 1;
+    }
+
+    .keyboard-help strong {
+      color: var(--primary);
     }
   </style>
 
@@ -603,33 +770,66 @@
   <script src="https://cdn.jsdelivr.net/npm/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
 </head>
 <body>
-  <header>
-    <div class="header-content">
-      <div class="logo">Markdown Live</div>
+  <!-- Controls -->
+  <div class="controls">
+    <div class="controls-content">
+      <div class="logo">Markdown Slides</div>
+
+      <div class="slide-info">
+        <div class="slide-counter">
+          <span id="currentSlide">1</span> / <span id="totalSlides">1</span>
+        </div>
+        <div class="slide-title" id="slideTitle">Carregando...</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
       <div class="input-group">
         <input id="mdPath" type="text" placeholder="documento.md ou README.md" />
       </div>
+
       <div class="button-group">
         <button id="btnLoad" class="btn btn-primary">🚀 Carregar</button>
-        <button id="btnFit" class="btn">🎯 Zoom 100%</button>
+        <button id="btnToggleOverview" class="btn btn-icon" title="Visão Geral (G)">📋</button>
+        <button id="btnHelp" class="btn btn-icon" title="Ajuda (?)">❓</button>
       </div>
     </div>
-  </header>
+  </div>
 
-  <main>
-    <div id="status" class="loading">Carregando documento…</div>
-    <article id="content"></article>
-    <p class="diagram-note">
-      ✨ Mermaid renderiza no cliente | 🔧 PlantUML é servido via <code>www.plantuml.com/plantuml</code>
-    </p>
-  </main>
+  <!-- Navigation Arrows -->
+  <button class="nav-arrow prev" id="prevSlide" title="Anterior (←)">‹</button>
+  <button class="nav-arrow next" id="nextSlide" title="Próximo (→)">›</button>
+
+  <!-- Slides Container -->
+  <div class="slides-container" id="slidesContainer">
+    <div id="loadingSlide" class="slide active">
+      <h1>Carregando Apresentação...</h1>
+      <p>Aguarde enquanto carregamos o conteúdo do Markdown.</p>
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div id="status" class="status loading hidden">Carregando documento…</div>
+
+  <!-- Fullscreen Modal -->
+  <div class="modal" id="fullscreenModal">
+    <button class="modal-close" id="closeModal">×</button>
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+
+  <!-- Keyboard Help -->
+  <div class="keyboard-help">
+    <strong>Atalhos:</strong><br>
+    ← → Navegar | F Fullscreen | G Overview | ESC Sair
+  </div>
 
 <script>
   // ===== Config =====
   const DEFAULT_MD = new URLSearchParams(location.search).get('md') || 'documento.md';
-  const PLANTUML_SERVER = 'https://www.plantuml.com/plantuml/svg/'; // png/svg/txt
+  const PLANTUML_SERVER = 'https://www.plantuml.com/plantuml/svg/';
 
-  // Mermaid init (dark theme automático)
+  // Mermaid init
   mermaid.initialize({
     startOnLoad: false,
     theme: 'dark',
@@ -648,46 +848,84 @@
     fontFamily: 'Inter, Roboto, system-ui'
   });
 
+  // ===== State =====
+  let currentSlideIndex = 0;
+  let slides = [];
+  let slideContents = [];
+
+  // ===== DOM Elements =====
   const mdPathInput = document.getElementById('mdPath');
   const btnLoad = document.getElementById('btnLoad');
-  const btnFit = document.getElementById('btnFit');
+  const btnToggleOverview = document.getElementById('btnToggleOverview');
+  const btnHelp = document.getElementById('btnHelp');
+  const prevSlideBtn = document.getElementById('prevSlide');
+  const nextSlideBtn = document.getElementById('nextSlide');
+  const slidesContainer = document.getElementById('slidesContainer');
   const statusEl = document.getElementById('status');
-  const contentEl = document.getElementById('content');
+  const currentSlideEl = document.getElementById('currentSlide');
+  const totalSlidesEl = document.getElementById('totalSlides');
+  const slideTitleEl = document.getElementById('slideTitle');
+  const progressFillEl = document.getElementById('progressFill');
+  const fullscreenModal = document.getElementById('fullscreenModal');
+  const modalContent = document.getElementById('modalContent');
+  const closeModal = document.getElementById('closeModal');
 
   mdPathInput.value = DEFAULT_MD;
 
+  // ===== Event Listeners =====
   btnLoad.addEventListener('click', () => loadAndRender(mdPathInput.value.trim() || DEFAULT_MD));
-  btnFit.addEventListener('click', () => document.body.style.zoom = '100%');
+  prevSlideBtn.addEventListener('click', () => navigateSlide(-1));
+  nextSlideBtn.addEventListener('click', () => navigateSlide(1));
+  closeModal.addEventListener('click', closeFullscreen);
+  btnToggleOverview.addEventListener('click', toggleOverview);
+  btnHelp.addEventListener('click', showHelp);
 
-  // Permite trocar arquivo com Enter
   mdPathInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') btnLoad.click();
   });
 
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') navigateSlide(-1);
+    else if (e.key === 'ArrowRight') navigateSlide(1);
+    else if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+    else if (e.key === 'g' || e.key === 'G') toggleOverview();
+    else if (e.key === '?' || e.key === 'h' || e.key === 'H') showHelp();
+    else if (e.key === 'Escape') {
+      if (fullscreenModal.classList.contains('active')) {
+        closeFullscreen();
+      }
+    }
+  });
+
+  // ===== Functions =====
   async function loadAndRender(path) {
     try {
       statusEl.classList.remove('hidden');
       statusEl.classList.remove('error');
       statusEl.classList.add('loading');
       statusEl.textContent = 'Carregando documento…';
+
       const res = await fetch(path + '?_=' + Date.now());
       if (!res.ok) throw new Error('Não foi possível carregar: ' + path);
       const md = await res.text();
 
-      // Converte Markdown -> HTML
+      // Parse Markdown
       const html = marked.parse(md, {
         mangle: false,
         headerIds: true,
         breaks: true
       });
 
-      contentEl.innerHTML = html;
+      // Process diagrams first
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
 
-      // Processa blocos de PlantUML
-      await renderPlantUML(contentEl);
+      await renderPlantUML(tempDiv);
+      await renderMermaid(tempDiv);
 
-      // Processa Mermaid
-      await renderMermaid(contentEl);
+      // Split into slides
+      createSlides(tempDiv.innerHTML);
 
       statusEl.classList.add('hidden');
     } catch (err) {
@@ -697,6 +935,131 @@
       statusEl.textContent = 'Erro: ' + err.message;
       console.error(err);
     }
+  }
+
+  function createSlides(html) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    slides = [];
+    slideContents = [];
+
+    // Get all H1 and H2 elements
+    const headings = tempDiv.querySelectorAll('h1, h2');
+    let lastIndex = 0;
+
+    headings.forEach((heading, index) => {
+      const title = heading.textContent.trim();
+      const nextHeading = headings[index + 1];
+      let content = '';
+
+      // Get content between this heading and the next
+      let current = heading.nextElementSibling;
+      while (current && current !== nextHeading) {
+        content += current.outerHTML;
+        current = current.nextElementSibling;
+      }
+
+      slides.push({
+        title: title,
+        level: heading.tagName.toLowerCase(),
+        content: content || '<p>Slide sem conteúdo</p>'
+      });
+    });
+
+    // If no headings, create single slide
+    if (slides.length === 0) {
+      slides.push({
+        title: 'Apresentação',
+        level: 'h1',
+        content: tempDiv.innerHTML
+      });
+    }
+
+    // Render slides
+    slidesContainer.innerHTML = '';
+    slides.forEach((slide, index) => {
+      const slideDiv = document.createElement('div');
+      slideDiv.className = 'slide';
+      slideDiv.innerHTML = `
+        <h${slide.level.replace('h', '')}>${slide.title}</h${slide.level.replace('h', '')}>
+        ${slide.content}
+      `;
+      slidesContainer.appendChild(slideDiv);
+
+      // Add click handler for diagrams
+      slideDiv.querySelectorAll('.mermaid, img').forEach(el => {
+        el.addEventListener('click', () => openFullscreen(el));
+      });
+    });
+
+    currentSlideIndex = 0;
+    showSlide(0);
+
+    totalSlidesEl.textContent = slides.length;
+  }
+
+  function showSlide(index) {
+    const slideElements = document.querySelectorAll('.slide');
+
+    if (index < 0) index = 0;
+    if (index >= slideElements.length) index = slideElements.length - 1;
+
+    slideElements.forEach((slide, i) => {
+      slide.classList.remove('active');
+      if (i === index) {
+        slide.classList.add('active');
+      }
+    });
+
+    currentSlideIndex = index;
+    currentSlideEl.textContent = index + 1;
+    slideTitleEl.textContent = slides[index]?.title || 'Slide';
+    progressFillEl.style.width = `${((index + 1) / slides.length) * 100}%`;
+  }
+
+  function navigateSlide(direction) {
+    const newIndex = currentSlideIndex + direction;
+    if (newIndex >= 0 && newIndex < slides.length) {
+      showSlide(newIndex);
+    }
+  }
+
+  function openFullscreen(element) {
+    modalContent.innerHTML = '';
+    const clone = element.cloneNode(true);
+    clone.style.cursor = 'default';
+    modalContent.appendChild(clone);
+    fullscreenModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeFullscreen() {
+    fullscreenModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
+  function toggleOverview() {
+    alert(`Visão Geral:\n\n${slides.map((s, i) => `${i + 1}. ${s.title}`).join('\n')}`);
+  }
+
+  function showHelp() {
+    alert(`📚 ATALHOS DO TECLADO:\n\n` +
+          `→ ou SPACE: Próximo slide\n` +
+          `← : Slide anterior\n` +
+          `F: Tela cheia\n` +
+          `G: Visão geral\n` +
+          `?: Ajuda\n` +
+          `ESC: Sair do modo tela cheia\n\n` +
+          `💡 Clique em diagramas para visualizar em tela cheia!`);
   }
 
   async function renderMermaid(root) {
@@ -709,7 +1072,6 @@
       container.textContent = graphDef;
       pre.parentNode.replaceChild(container, pre);
     }
-    // renderiza tudo
     if (mermaidBlocks.length > 0) {
       await mermaid.run({ querySelector: '.mermaid' });
     }
@@ -730,7 +1092,7 @@
     }
   }
 
-  // Carrega inicial
+  // Load initial document
   loadAndRender(DEFAULT_MD);
 </script>
 </body>
