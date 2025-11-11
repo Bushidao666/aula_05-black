@@ -1133,8 +1133,8 @@ graph TD
 
     style H fill:#51cf66,stroke:#2f9e44,stroke-width:4px
 
-    class A,B,C,D,E,F azul
     classDef azul fill:#4c6ef5,color:#fff
+    class A,B,C,D,E,F azul
 ```
 
 ---
