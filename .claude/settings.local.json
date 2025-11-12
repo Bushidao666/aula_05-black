@@ -3,7 +3,9 @@
     "allow": [
       "Bash(git commit:*)",
       "Bash(git push)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(cat:*)",
+      "Bash(ux_ui_apresentacoes_pesquisa.md)"
     ],
     "deny": [],
     "ask": []

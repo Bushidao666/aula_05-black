@@ -3,10 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Markdown Live Slides — Mermaid & PlantUML</title>
+  <title>Professional Markdown Slides — Mermaid & PlantUML</title>
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 
   <style>
     :root {
@@ -20,20 +23,26 @@
       --bg-primary: #0b0f14;
       --bg-secondary: #0f172a;
       --bg-tertiary: #1e293b;
-      --bg-card: rgba(30, 41, 59, 0.6);
+      --bg-card: rgba(30, 41, 59, 0.7);
+      --bg-glass: rgba(15, 23, 42, 0.8);
 
       --text-primary: #f1f5f9;
       --text-secondary: #cbd5e1;
       --text-muted: #94a3b8;
 
-      --border: rgba(148, 163, 184, 0.15);
+      --border: rgba(148, 163, 184, 0.2);
       --border-hover: rgba(139, 92, 246, 0.5);
 
       --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
       --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.3);
-      --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.3);
-      --shadow-glow-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
-      --shadow-glow-amber: 0 0 20px rgba(245, 158, 11, 0.3);
+      --shadow-lg: 0 16px 64px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.4);
+      --shadow-glow-cyan: 0 0 20px rgba(6, 182, 212, 0.4);
+
+      --slide-padding: 3rem;
+      --slide-border-radius: 20px;
+      --transition-speed: 400ms;
+      --animation-speed: 500ms;
     }
 
     * {
@@ -47,11 +56,8 @@
       background: var(--bg-primary);
       color: var(--text-primary);
       line-height: 1.6;
-      overflow-x: hidden;
-    }
-
-    body {
-      transition: all 0.5s ease;
+      overflow: hidden;
+      height: 100vh;
     }
 
     /* Background Pattern */
@@ -71,26 +77,39 @@
     }
 
     @keyframes float {
-      0%, 100% { opacity: 0.5; }
+      0%, 100% { opacity: 0.6; }
       50% { opacity: 1; }
+    }
+
+    /* Presentation Container */
+    .presentation {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
+      position: relative;
     }
 
     /* Controls Header */
     .controls {
-      position: sticky;
+      position: fixed;
       top: 0;
-      z-index: 100;
+      left: 0;
+      right: 0;
+      z-index: 1000;
       backdrop-filter: blur(20px) saturate(1.5);
-      background: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+      background: var(--bg-glass);
       border-bottom: 1px solid var(--border);
-      padding: 0.75rem 0;
+      padding: 0.5rem 0;
       box-shadow: var(--shadow-md);
     }
 
     .controls-content {
-      max-width: 1600px;
+      max-width: 1800px;
       margin: 0 auto;
-      padding: 0 2rem;
+      padding: 0 1.5rem;
       display: flex;
       gap: 1.5rem;
       align-items: center;
@@ -100,7 +119,7 @@
 
     .logo {
       font-size: 1.25rem;
-      font-weight: 700;
+      font-weight: 800;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -112,7 +131,7 @@
 
     .logo::before {
       content: '⚡';
-      font-size: 1.5rem;
+      font-size: 1.75rem;
       animation: pulse 2s ease-in-out infinite;
     }
 
@@ -124,69 +143,117 @@
     .slide-info {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 1.5rem;
       flex: 1;
       justify-content: center;
     }
 
     .slide-counter {
       background: var(--bg-card);
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
+      padding: 0.5rem 1.25rem;
+      border-radius: 10px;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       border: 1px solid var(--border);
+      font-variant-numeric: tabular-nums;
     }
 
     .slide-title {
       color: var(--text-secondary);
       font-size: 0.95rem;
-      max-width: 400px;
+      max-width: 500px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
+    .progress-container {
+      flex: 2;
+      max-width: 400px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
     .progress-bar {
-      height: 3px;
+      flex: 1;
+      height: 4px;
       background: var(--bg-tertiary);
       border-radius: 2px;
       overflow: hidden;
-      flex: 2;
-      max-width: 300px;
+      position: relative;
     }
 
     .progress-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--primary), var(--secondary));
       border-radius: 2px;
-      transition: width 0.3s ease;
+      transition: width var(--transition-speed) ease;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 20px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-20px); }
+      100% { transform: translateX(20px); }
+    }
+
+    .timer {
+      background: var(--bg-card);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .timer.warning {
+      color: var(--accent);
+      animation: pulse 1s infinite;
+    }
+
+    .timer.danger {
+      color: var(--danger);
+      animation: pulse 0.5s infinite;
     }
 
     .input-group {
       flex: 1;
       min-width: 250px;
+      max-width: 350px;
       position: relative;
     }
 
     .input-group input {
       width: 100%;
       padding: 0.75rem 1rem;
-      padding-left: 2.5rem;
+      padding-left: 2.75rem;
       border-radius: 10px;
       border: 1px solid var(--border);
       background: var(--bg-card);
       color: var(--text-primary);
       font-size: 0.9rem;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
+      transition: all var(--transition-speed) ease;
     }
 
     .input-group input:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: var(--shadow-glow);
-      background: rgba(30, 41, 59, 0.8);
+      background: rgba(30, 41, 59, 0.9);
     }
 
     .input-group::before {
@@ -205,7 +272,7 @@
     }
 
     .btn {
-      padding: 0.65rem 1.25rem;
+      padding: 0.75rem 1.25rem;
       border-radius: 10px;
       border: 1px solid var(--border);
       background: var(--bg-card);
@@ -213,7 +280,7 @@
       font-weight: 600;
       font-size: 0.9rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all var(--transition-speed) ease;
       backdrop-filter: blur(10px);
       position: relative;
       overflow: hidden;
@@ -230,7 +297,7 @@
       width: 100%;
       height: 100%;
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-      transition: left 0.5s;
+      transition: left var(--transition-speed);
     }
 
     .btn:hover::before {
@@ -248,128 +315,147 @@
       border-color: transparent;
     }
 
-    .btn-primary:hover {
-      box-shadow: var(--shadow-glow);
-      transform: translateY(-2px) scale(1.05);
-    }
-
     .btn-icon {
-      padding: 0.65rem;
+      padding: 0.75rem;
       min-width: 44px;
       justify-content: center;
     }
 
-    /* Slide Container */
-    .slides-container {
-      max-width: 1600px;
-      margin: 2rem auto;
-      padding: 0 2rem;
-      min-height: calc(100vh - 200px);
-      position: relative;
+    .btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
     }
 
+    /* Slide */
     .slide {
-      display: none;
-      animation: slideIn 0.5s ease-out;
+      position: absolute;
+      width: 90%;
+      max-width: 1400px;
+      height: 80vh;
+      max-height: 800px;
       background: var(--bg-card);
-      border-radius: 16px;
+      border-radius: var(--slide-border-radius);
       border: 1px solid var(--border);
       backdrop-filter: blur(10px);
-      padding: 3rem;
-      box-shadow: var(--shadow-md);
-      min-height: 600px;
+      padding: var(--slide-padding);
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      transform: translateX(100px) scale(0.95);
+      transition: all var(--animation-speed) cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
     }
 
     .slide.active {
-      display: block;
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      z-index: 10;
     }
 
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateX(50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+    .slide.prev {
+      transform: translateX(-100px) scale(0.95);
+      opacity: 0;
     }
 
-    @keyframes slideOut {
-      from {
-        opacity: 1;
-        transform: translateX(0);
-      }
-      to {
-        opacity: 0;
-        transform: translateX(-50px);
-      }
+    .slide-stack {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
     }
 
-    .slide.slide-out {
-      animation: slideOut 0.5s ease-out;
+    .slide-stack .slide {
+      position: absolute;
     }
 
     /* Content Styles */
+    .slide-content {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) var(--bg-tertiary);
+    }
+
+    .slide-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .slide-content::-webkit-scrollbar-track {
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+    }
+
+    .slide-content::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--primary), var(--secondary));
+      border-radius: 4px;
+    }
+
     .slide h1,
     .slide h2,
     .slide h3,
     .slide h4 {
       margin-top: 0;
       margin-bottom: 1.5rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .slide h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-top: 0;
+      border-bottom: 3px solid var(--primary);
+      padding-bottom: 1.5rem;
       background: linear-gradient(135deg, var(--text-primary), var(--secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .slide h1 {
-      font-size: 2.5rem;
-      margin-top: 0;
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 1.5rem;
     }
 
     .slide h1::before {
       content: '🎯';
-      font-size: 2.5rem;
+      font-size: clamp(2rem, 5vw, 3rem);
     }
 
     .slide h2 {
-      font-size: 2rem;
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      background: linear-gradient(135deg, var(--text-primary), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .slide h2::before {
       content: '📌';
-      font-size: 2rem;
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
     }
 
     .slide h3 {
-      font-size: 1.5rem;
+      font-size: clamp(1.25rem, 3vw, 1.75rem);
+      color: var(--secondary);
     }
 
     .slide h3::before {
       content: '🔸';
-      font-size: 1.5rem;
+      font-size: clamp(1.25rem, 3vw, 1.75rem);
     }
 
     .slide h4 {
-      font-size: 1.25rem;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: var(--accent);
     }
 
     .slide h4::before {
       content: '▸';
-      font-size: 1.25rem;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
     }
 
     .slide p {
       margin-bottom: 1.5rem;
       color: var(--text-secondary);
-      font-size: 1.1rem;
+      font-size: clamp(1rem, 2vw, 1.15rem);
       line-height: 1.8;
     }
 
@@ -397,7 +483,7 @@
 
     .slide blockquote p {
       margin: 0;
-      font-size: 1.2rem;
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
       font-weight: 500;
       color: var(--text-primary);
     }
@@ -448,12 +534,19 @@
       margin-bottom: 0.75rem;
       color: var(--text-secondary);
       line-height: 1.8;
-      font-size: 1.05rem;
+      font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+      position: relative;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .slide li:hover {
+      transform: translateX(5px);
+      color: var(--text-primary);
     }
 
     .slide ul li::marker {
       color: var(--primary);
-      font-size: 1.2rem;
+      font-size: 1.3rem;
     }
 
     /* Code Blocks */
@@ -461,7 +554,7 @@
       background: var(--bg-tertiary) !important;
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 1.5rem;
+      padding: 1.75rem;
       margin: 2rem 0;
       overflow-x: auto;
       position: relative;
@@ -481,28 +574,54 @@
     }
 
     .slide code {
-      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
       font-size: 0.95rem;
       color: var(--text-primary);
     }
 
+    /* Fragments */
+    .fragment {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all var(--transition-speed) ease;
+    }
+
+    .fragment.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fragment.current-fragment {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* Mermaid Diagrams */
     .slide .mermaid {
-      margin: 2.5rem 0;
+      margin: 2rem 0;
       padding: 2rem;
       background: var(--bg-tertiary);
       border-radius: 12px;
       border: 1px solid var(--border);
       backdrop-filter: blur(10px);
       box-shadow: var(--shadow-md);
-      overflow-x: auto;
-      cursor: pointer;
-      transition: all 0.3s ease;
+      overflow: auto;
+      cursor: grab;
+      transition: all var(--transition-speed) ease;
+      position: relative;
+    }
+
+    .slide .mermaid:active {
+      cursor: grabbing;
     }
 
     .slide .mermaid:hover {
       box-shadow: var(--shadow-glow);
       transform: scale(1.01);
+    }
+
+    .slide .mermaid svg {
+      transition: all var(--transition-speed) ease;
     }
 
     /* PlantUML Images */
@@ -513,8 +632,12 @@
       border-radius: 12px;
       border: 1px solid var(--border);
       box-shadow: var(--shadow-md);
-      transition: all 0.3s ease;
-      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+      cursor: grab;
+    }
+
+    .slide img:active {
+      cursor: grabbing;
     }
 
     .slide img:hover {
@@ -523,38 +646,26 @@
       border-color: var(--secondary);
     }
 
-    /* Links */
-    .slide a {
-      color: var(--secondary);
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: all 0.3s ease;
-    }
-
-    .slide a:hover {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-    }
-
     /* Navigation Arrows */
     .nav-arrow {
       position: fixed;
       top: 50%;
       transform: translateY(-50%);
       background: var(--bg-card);
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
       color: var(--text-primary);
-      width: 60px;
-      height: 60px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
-      font-size: 1.5rem;
+      font-size: 2rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all var(--transition-speed) ease;
       backdrop-filter: blur(10px);
-      z-index: 50;
+      z-index: 100;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: var(--shadow-md);
     }
 
     .nav-arrow:hover {
@@ -564,12 +675,231 @@
       transform: translateY(-50%) scale(1.1);
     }
 
+    .nav-arrow:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .nav-arrow:disabled:hover {
+      transform: translateY(-50%) scale(1);
+      box-shadow: var(--shadow-md);
+    }
+
     .nav-arrow.prev {
       left: 2rem;
     }
 
     .nav-arrow.next {
       right: 2rem;
+    }
+
+    /* Presenter View */
+    .presenter-mode {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-primary);
+      z-index: 2000;
+      display: none;
+      flex-direction: column;
+    }
+
+    .presenter-mode.active {
+      display: flex;
+    }
+
+    .presenter-header {
+      background: var(--bg-glass);
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .presenter-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      padding: 2rem;
+      overflow: auto;
+    }
+
+    .current-slide-preview {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .current-slide-preview .slide {
+      position: relative;
+      transform: none;
+      opacity: 1;
+      width: 100%;
+      height: 100%;
+      max-height: none;
+    }
+
+    .next-slide-preview {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .next-slide-preview .slide {
+      position: relative;
+      transform: none;
+      opacity: 1;
+      width: 100%;
+      height: 100%;
+      max-height: none;
+      opacity: 0.5;
+    }
+
+    .speaker-notes {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-lg);
+      margin-top: 1rem;
+    }
+
+    .speaker-notes h3 {
+      color: var(--accent);
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    .speaker-notes-content {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .presenter-controls {
+      background: var(--bg-glass);
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    /* Overview Grid */
+    .overview-mode {
+      position: fixed;
+      top: 4rem;
+      left: 0;
+      right: 0;
+      bottom: 4rem;
+      background: var(--bg-primary);
+      z-index: 1500;
+      display: none;
+      flex-direction: column;
+      overflow: auto;
+      padding: 2rem;
+    }
+
+    .overview-mode.active {
+      display: flex;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1800px;
+      margin: 0 auto;
+    }
+
+    .overview-slide {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 1rem;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+      aspect-ratio: 16/9;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .overview-slide:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary);
+    }
+
+    .overview-slide.active {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .overview-slide-number {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .overview-slide-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .overview-slide-content {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    /* Jump to Slide */
+    .jump-to-slide {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      z-index: 1600;
+      display: none;
+      min-width: 400px;
+    }
+
+    .jump-to-slide.active {
+      display: block;
+    }
+
+    .jump-to-slide input {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 2px solid var(--primary);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     /* Status */
@@ -582,8 +912,9 @@
       border-radius: 12px;
       backdrop-filter: blur(10px);
       border: 1px solid var(--border);
-      animation: slideUp 0.5s ease-out;
-      z-index: 100;
+      animation: slideUp var(--transition-speed) ease-out;
+      z-index: 1000;
+      font-weight: 600;
     }
 
     @keyframes slideUp {
@@ -608,7 +939,7 @@
       color: #fecaca;
     }
 
-    /* Diagram Fullscreen Modal */
+    /* Fullscreen Modal */
     .modal {
       display: none;
       position: fixed;
@@ -616,8 +947,8 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.95);
-      z-index: 1000;
+      background: rgba(0, 0, 0, 0.98);
+      z-index: 3000;
       align-items: center;
       justify-content: center;
       padding: 2rem;
@@ -628,6 +959,11 @@
       animation: fadeIn 0.3s ease-out;
     }
 
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     .modal-content {
       max-width: 95%;
       max-height: 95%;
@@ -636,7 +972,7 @@
       border-radius: 16px;
       padding: 2rem;
       border: 1px solid var(--border);
-      box-shadow: 0 0 50px rgba(139, 92, 246, 0.5);
+      box-shadow: 0 0 100px rgba(139, 92, 246, 0.5);
     }
 
     .modal-close {
@@ -646,18 +982,21 @@
       background: var(--danger);
       color: white;
       border: none;
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      font-size: 1.5rem;
+      font-size: 2rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all var(--transition-speed) ease;
       z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .modal-close:hover {
       transform: scale(1.1);
-      box-shadow: 0 0 20px var(--danger);
+      box-shadow: 0 0 30px var(--danger);
     }
 
     .modal-content svg,
@@ -665,6 +1004,95 @@
       max-width: 100%;
       height: auto;
       display: block;
+      cursor: grab;
+    }
+
+    /* Keyboard Help */
+    .keyboard-help {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      backdrop-filter: blur(10px);
+      font-size: 0.85rem;
+      opacity: 0.7;
+      transition: opacity var(--transition-speed);
+      z-index: 500;
+    }
+
+    .keyboard-help:hover {
+      opacity: 1;
+    }
+
+    .keyboard-help strong {
+      color: var(--primary);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .keyboard-help-grid {
+      display: grid;
+      grid-template-columns: auto auto;
+      gap: 0.5rem 1.5rem;
+    }
+
+    /* Zoom/Spotlight */
+    .zoom-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: none;
+    }
+
+    .zoom-overlay.active {
+      display: flex;
+    }
+
+    .spotlight {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      box-shadow: 0 0 50px rgba(245, 158, 11, 0.5);
+    }
+
+    /* Blackout Mode */
+    .blackout {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      z-index: 1800;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .blackout.active {
+      display: flex;
+    }
+
+    .blackout-text {
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 800;
+      color: var(--text-muted);
+      animation: pulse 2s ease-in-out infinite;
     }
 
     /* Responsive */
@@ -681,7 +1109,7 @@
 
       .input-group {
         width: 100%;
-        min-width: 100%;
+        max-width: 100%;
       }
 
       .button-group {
@@ -690,9 +1118,9 @@
       }
 
       .nav-arrow {
-        width: 50px;
-        height: 50px;
-        font-size: 1.25rem;
+        width: 60px;
+        height: 60px;
+        font-size: 1.75rem;
       }
 
       .nav-arrow.prev {
@@ -703,33 +1131,41 @@
         right: 1rem;
       }
 
-      .slides-container {
-        padding: 0 1rem;
-      }
-
       .slide {
+        width: 95%;
         padding: 2rem;
       }
+
+      .presenter-content {
+        grid-template-columns: 1fr;
+      }
+
+      .overview-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
     }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 12px;
-      height: 12px;
+    /* Sound Effects Toggle */
+    .sound-toggle {
+      position: fixed;
+      top: 5rem;
+      right: 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.5rem 1rem;
+      z-index: 1000;
+      cursor: pointer;
+      transition: all var(--transition-speed);
     }
 
-    ::-webkit-scrollbar-track {
-      background: var(--bg-secondary);
+    .sound-toggle:hover {
+      background: var(--primary);
+      border-color: var(--primary);
     }
 
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, var(--primary), var(--secondary));
-      border-radius: 6px;
-      border: 2px solid var(--bg-secondary);
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(180deg, var(--primary-dark), var(--secondary));
+    .sound-toggle.muted {
+      opacity: 0.5;
     }
 
     /* Selection */
@@ -738,27 +1174,17 @@
       color: white;
     }
 
-    /* Keyboard Shortcuts Help */
-    .keyboard-help {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1rem;
-      backdrop-filter: blur(10px);
-      font-size: 0.85rem;
-      opacity: 0.7;
-      transition: opacity 0.3s;
+    /* Hidden */
+    .hidden {
+      display: none !important;
     }
 
-    .keyboard-help:hover {
-      opacity: 1;
-    }
-
-    .keyboard-help strong {
-      color: var(--primary);
+    /* Focus Styles */
+    .btn:focus-visible,
+    input:focus-visible,
+    .nav-arrow:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
     }
   </style>
 
@@ -773,15 +1199,18 @@
   <!-- Controls -->
   <div class="controls">
     <div class="controls-content">
-      <div class="logo">Markdown Slides</div>
+      <div class="logo">Professional Slides</div>
 
       <div class="slide-info">
         <div class="slide-counter">
           <span id="currentSlide">1</span> / <span id="totalSlides">1</span>
         </div>
         <div class="slide-title" id="slideTitle">Carregando...</div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill"></div>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="timer" id="timer">00:00</div>
         </div>
       </div>
 
@@ -791,23 +1220,27 @@
 
       <div class="button-group">
         <button id="btnLoad" class="btn btn-primary">🚀 Carregar</button>
-        <button id="btnToggleOverview" class="btn btn-icon" title="Visão Geral (G)">📋</button>
-        <button id="btnHelp" class="btn btn-icon" title="Ajuda (?)">❓</button>
+        <button id="btnPresenter" class="btn" title="Modo Apresentador (S)">📺</button>
+        <button id="btnOverview" class="btn" title="Visão Geral (O)">📋</button>
+        <button id="btnHelp" class="btn" title="Ajuda (?)">❓</button>
       </div>
     </div>
   </div>
 
-  <!-- Navigation Arrows -->
-  <button class="nav-arrow prev" id="prevSlide" title="Anterior (←)">‹</button>
-  <button class="nav-arrow next" id="nextSlide" title="Próximo (→)">›</button>
-
-  <!-- Slides Container -->
-  <div class="slides-container" id="slidesContainer">
-    <div id="loadingSlide" class="slide active">
-      <h1>Carregando Apresentação...</h1>
-      <p>Aguarde enquanto carregamos o conteúdo do Markdown.</p>
+  <!-- Presentation Container -->
+  <div class="presentation" id="presentation">
+    <div class="slide-stack" id="slideStack">
+      <!-- Slides will be dynamically added here -->
     </div>
   </div>
+
+  <!-- Navigation Arrows -->
+  <button class="nav-arrow prev" id="prevSlide" title="Anterior (←)">
+    <i class="ti ti-chevron-left"></i>
+  </button>
+  <button class="nav-arrow next" id="nextSlide" title="Próximo (→)">
+    <i class="ti ti-chevron-right"></i>
+  </button>
 
   <!-- Status -->
   <div id="status" class="status loading hidden">Carregando documento…</div>
@@ -818,16 +1251,89 @@
     <div class="modal-content" id="modalContent"></div>
   </div>
 
+  <!-- Presenter View -->
+  <div class="presenter-mode" id="presenterMode">
+    <div class="presenter-header">
+      <div class="logo">Modo Apresentador</div>
+      <button id="exitPresenter" class="btn btn-primary">Sair</button>
+    </div>
+    <div class="presenter-content">
+      <div class="current-slide-preview">
+        <h3>Slide Atual</h3>
+        <div class="slide" id="currentSlidePreview"></div>
+      </div>
+      <div>
+        <div class="next-slide-preview">
+          <h3>Próximo Slide</h3>
+          <div class="slide" id="nextSlidePreview"></div>
+        </div>
+        <div class="speaker-notes">
+          <h3>Speaker Notes</h3>
+          <div class="speaker-notes-content" id="speakerNotes">
+            Nenhuma nota adicionada.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="presenter-controls">
+      <button id="prevSlidePresenter" class="btn">
+        <i class="ti ti-chevron-left"></i> Anterior
+      </button>
+      <div class="slide-counter">
+        <span id="currentSlidePresenter">1</span> / <span id="totalSlidesPresenter">1</span>
+      </div>
+      <button id="nextSlidePresenter" class="btn">
+        Próximo <i class="ti ti-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Overview Grid -->
+  <div class="overview-mode" id="overviewMode">
+    <div class="overview-grid" id="overviewGrid">
+      <!-- Overview slides will be added here -->
+    </div>
+  </div>
+
+  <!-- Jump to Slide -->
+  <div class="jump-to-slide" id="jumpToSlide">
+    <input type="text" id="jumpInput" placeholder="Número da slide" autofocus>
+  </div>
+
+  <!-- Zoom Overlay -->
+  <div class="zoom-overlay" id="zoomOverlay">
+    <div class="spotlight" id="spotlight"></div>
+  </div>
+
+  <!-- Blackout -->
+  <div class="blackout" id="blackout">
+    <div class="blackout-text">BLACKOUT</div>
+  </div>
+
+  <!-- Sound Toggle -->
+  <div class="sound-toggle muted" id="soundToggle" title="Toggle Som">
+    🔊
+  </div>
+
   <!-- Keyboard Help -->
   <div class="keyboard-help">
-    <strong>Atalhos:</strong><br>
-    ← → Navegar | F Fullscreen | G Overview | ESC Sair
+    <strong>Atalhos</strong>
+    <div class="keyboard-help-grid">
+      <div>← → ou Space:</div><div>Navegar</div>
+      <div>S:</div><div>Apresentador</div>
+      <div>O:</div><div>Overview</div>
+      <div>F:</div><div>Fullscreen</div>
+      <div>B:</div><div>Blackout</div>
+      <div>J:</div><div>Jump</div>
+      <div>Alt+Click:</div><div>Zoom</div>
+    </div>
   </div>
 
 <script>
   // ===== Config =====
   const DEFAULT_MD = new URLSearchParams(location.search).get('md') || 'documento.md';
   const PLANTUML_SERVER = 'https://www.plantuml.com/plantuml/svg/';
+  const SPEAKER_NOTES_PREFIX = ':::notes'; // Syntax para speaker notes
 
   // Mermaid init
   mermaid.initialize({
@@ -845,30 +1351,59 @@
       secondBkg: '#0f172a',
       tertiaryBkg: '#0b0f14'
     },
-    fontFamily: 'Inter, Roboto, system-ui'
+    fontFamily: 'Inter, Roboto, system-ui',
+    securityLevel: 'loose'
   });
 
   // ===== State =====
   let currentSlideIndex = 0;
   let slides = [];
-  let slideContents = [];
+  let fragments = [];
+  let currentFragmentIndex = 0;
+  let isPresenterMode = false;
+  let isOverviewMode = false;
+  let isJumpMode = false;
+  let isZoomMode = false;
+  let isBlackout = false;
+  let soundEnabled = false;
+  let startTime = Date.now();
+  let timerInterval = null;
 
   // ===== DOM Elements =====
   const mdPathInput = document.getElementById('mdPath');
   const btnLoad = document.getElementById('btnLoad');
-  const btnToggleOverview = document.getElementById('btnToggleOverview');
+  const btnPresenter = document.getElementById('btnPresenter');
+  const btnOverview = document.getElementById('btnOverview');
   const btnHelp = document.getElementById('btnHelp');
   const prevSlideBtn = document.getElementById('prevSlide');
   const nextSlideBtn = document.getElementById('nextSlide');
-  const slidesContainer = document.getElementById('slidesContainer');
+  const slideStack = document.getElementById('slideStack');
   const statusEl = document.getElementById('status');
   const currentSlideEl = document.getElementById('currentSlide');
   const totalSlidesEl = document.getElementById('totalSlides');
   const slideTitleEl = document.getElementById('slideTitle');
   const progressFillEl = document.getElementById('progressFill');
+  const timerEl = document.getElementById('timer');
   const fullscreenModal = document.getElementById('fullscreenModal');
   const modalContent = document.getElementById('modalContent');
   const closeModal = document.getElementById('closeModal');
+  const presenterMode = document.getElementById('presenterMode');
+  const exitPresenter = document.getElementById('exitPresenter');
+  const currentSlidePreview = document.getElementById('currentSlidePreview');
+  const nextSlidePreview = document.getElementById('nextSlidePreview');
+  const speakerNotesEl = document.getElementById('speakerNotes');
+  const currentSlidePresenter = document.getElementById('currentSlidePresenter');
+  const totalSlidesPresenter = document.getElementById('totalSlidesPresenter');
+  const prevSlidePresenter = document.getElementById('prevSlidePresenter');
+  const nextSlidePresenter = document.getElementById('nextSlidePresenter');
+  const overviewMode = document.getElementById('overviewMode');
+  const overviewGrid = document.getElementById('overviewGrid');
+  const jumpToSlide = document.getElementById('jumpToSlide');
+  const jumpInput = document.getElementById('jumpInput');
+  const zoomOverlay = document.getElementById('zoomOverlay');
+  const spotlight = document.getElementById('spotlight');
+  const blackout = document.getElementById('blackout');
+  const soundToggle = document.getElementById('soundToggle');
 
   mdPathInput.value = DEFAULT_MD;
 
@@ -877,26 +1412,98 @@
   prevSlideBtn.addEventListener('click', () => navigateSlide(-1));
   nextSlideBtn.addEventListener('click', () => navigateSlide(1));
   closeModal.addEventListener('click', closeFullscreen);
-  btnToggleOverview.addEventListener('click', toggleOverview);
+  btnPresenter.addEventListener('click', togglePresenterMode);
+  btnOverview.addEventListener('click', toggleOverview);
   btnHelp.addEventListener('click', showHelp);
+  exitPresenter.addEventListener('click', togglePresenterMode);
+  prevSlidePresenter.addEventListener('click', () => navigateSlide(-1));
+  nextSlidePresenter.addEventListener('click', () => navigateSlide(1));
+  soundToggle.addEventListener('click', toggleSound);
 
   mdPathInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') btnLoad.click();
   });
 
+  jumpInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const slideNum = parseInt(jumpInput.value);
+      if (!isNaN(slideNum) && slideNum > 0 && slideNum <= slides.length) {
+        showSlide(slideNum - 1);
+        closeJump();
+      }
+    } else if (e.key === 'Escape') {
+      closeJump();
+    }
+  });
+
   // Keyboard navigation
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') navigateSlide(-1);
-    else if (e.key === 'ArrowRight') navigateSlide(1);
-    else if (e.key === 'f' || e.key === 'F') toggleFullscreen();
-    else if (e.key === 'g' || e.key === 'G') toggleOverview();
-    else if (e.key === '?' || e.key === 'h' || e.key === 'H') showHelp();
-    else if (e.key === 'Escape') {
-      if (fullscreenModal.classList.contains('active')) {
-        closeFullscreen();
+    if (isJumpMode) return;
+    if (isPresenterMode && !e.target.matches('input, textarea')) {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        navigateSlide(e.key === 'ArrowRight' || e.key === ' ' ? 1 : -1);
+      }
+    } else if (!e.target.matches('input, textarea')) {
+      if (e.key === 'ArrowLeft') navigateSlide(-1);
+      else if (e.key === 'ArrowRight' || e.key === ' ') navigateSlide(1);
+      else if (e.key === 's' || e.key === 'S') togglePresenterMode();
+      else if (e.key === 'o' || e.key === 'O') toggleOverview();
+      else if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+      else if (e.key === 'b' || e.key === 'B') toggleBlackout();
+      else if (e.key === 'j' || e.key === 'J') openJump();
+      else if (e.key === '?' || e.key === 'h' || e.key === 'H') showHelp();
+      else if (e.key === 'Escape') {
+        if (fullscreenModal.classList.contains('active')) closeFullscreen();
+        else if (presenterMode.classList.contains('active')) togglePresenterMode();
+        else if (overviewMode.classList.contains('active')) toggleOverview();
+        else if (isZoomMode) exitZoom();
+      } else if (e.altKey && e.key === 'Click') {
+        // Alt+Click for zoom will be handled by click event
       }
     }
   });
+
+  // Zoom on Alt+Click
+  document.addEventListener('click', (e) => {
+    if (e.altKey && !e.target.matches('input, button')) {
+      e.preventDefault();
+      const rect = e.target.getBoundingClientRect();
+      const x = e.clientX;
+      const y = e.clientY;
+      enterZoom(x, y);
+    }
+  });
+
+  // Mouse move for spotlight
+  document.addEventListener('mousemove', (e) => {
+    if (isZoomMode) {
+      spotlight.style.left = e.clientX - 100 + 'px';
+      spotlight.style.top = e.clientY - 100 + 'px';
+    }
+  });
+
+  // Touch gestures for mobile
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+
+  document.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  });
+
+  function handleSwipe() {
+    const swipeThreshold = 50;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > swipeThreshold) {
+      if (diff > 0) navigateSlide(1);
+      else navigateSlide(-1);
+    }
+  }
 
   // ===== Functions =====
   async function loadAndRender(path) {
@@ -910,8 +1517,9 @@
       if (!res.ok) throw new Error('Não foi possível carregar: ' + path);
       const md = await res.text();
 
-      // Parse Markdown
-      const html = marked.parse(md, {
+      // Parse Markdown with speaker notes
+      const parsed = parseMarkdownWithNotes(md);
+      const html = marked.parse(parsed.content, {
         mangle: false,
         headerIds: true,
         breaks: true
@@ -925,9 +1533,10 @@
       await renderMermaid(tempDiv);
 
       // Split into slides
-      createSlides(tempDiv.innerHTML);
+      createSlides(tempDiv.innerHTML, parsed.notes);
 
       statusEl.classList.add('hidden');
+      startTimer();
     } catch (err) {
       statusEl.classList.remove('hidden');
       statusEl.classList.remove('loading');
@@ -937,16 +1546,56 @@
     }
   }
 
-  function createSlides(html) {
+  function parseMarkdownWithNotes(md) {
+    const lines = md.split('\n');
+    const content = [];
+    const notes = {};
+    let currentSlideNum = 0;
+    let inNotes = false;
+    let currentNote = '';
+
+    for (const line of lines) {
+      if (line.trim().startsWith(SPEAKER_NOTES_PREFIX)) {
+        inNotes = !inNotes;
+        if (!inNotes && currentNote) {
+          notes[currentSlideNum] = currentNote.trim();
+          currentNote = '';
+        }
+        continue;
+      }
+
+      if (inNotes) {
+        currentNote += line + '\n';
+      } else {
+        content.push(line);
+      }
+
+      // Track slide numbers for notes
+      if (line.startsWith('#') || line.startsWith('##')) {
+        currentSlideNum++;
+      }
+    }
+
+    if (currentNote) {
+      notes[currentSlideNum] = currentNote.trim();
+    }
+
+    return {
+      content: content.join('\n'),
+      notes: notes
+    };
+  }
+
+  function createSlides(html, speakerNotes = {}) {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
 
     slides = [];
-    slideContents = [];
+    fragments = [];
 
     // Get all H1 and H2 elements
     const headings = tempDiv.querySelectorAll('h1, h2');
-    let lastIndex = 0;
+    let currentSlideNum = 0;
 
     headings.forEach((heading, index) => {
       const title = heading.textContent.trim();
@@ -960,10 +1609,12 @@
         current = current.nextElementSibling;
       }
 
+      currentSlideNum++;
       slides.push({
         title: title,
         level: heading.tagName.toLowerCase(),
-        content: content || '<p>Slide sem conteúdo</p>'
+        content: content || '<p>Slide sem conteúdo</p>',
+        speakerNotes: speakerNotes[currentSlideNum] || 'Nenhuma nota adicionada.'
       });
     });
 
@@ -972,20 +1623,39 @@
       slides.push({
         title: 'Apresentação',
         level: 'h1',
-        content: tempDiv.innerHTML
+        content: tempDiv.innerHTML,
+        speakerNotes: 'Nenhuma nota adicionada.'
       });
     }
 
     // Render slides
-    slidesContainer.innerHTML = '';
+    slideStack.innerHTML = '';
+    overviewGrid.innerHTML = '';
     slides.forEach((slide, index) => {
+      // Main slide
       const slideDiv = document.createElement('div');
       slideDiv.className = 'slide';
       slideDiv.innerHTML = `
-        <h${slide.level.replace('h', '')}>${slide.title}</h${slide.level.replace('h', '')}>
-        ${slide.content}
+        <div class="slide-content">
+          <h${slide.level.replace('h', '')}>${slide.title}</h${slide.level.replace('h', '')}>
+          ${slide.content}
+        </div>
       `;
-      slidesContainer.appendChild(slideDiv);
+      slideStack.appendChild(slideDiv);
+
+      // Overview slide
+      const overviewSlide = document.createElement('div');
+      overviewSlide.className = 'overview-slide';
+      overviewSlide.innerHTML = `
+        <div class="overview-slide-number">Slide ${index + 1}</div>
+        <div class="overview-slide-title">${slide.title}</div>
+        <div class="overview-slide-content">${stripHtml(slide.content).substring(0, 100)}...</div>
+      `;
+      overviewSlide.addEventListener('click', () => {
+        showSlide(index);
+        toggleOverview();
+      });
+      overviewGrid.appendChild(overviewSlide);
 
       // Add click handler for diagrams
       slideDiv.querySelectorAll('.mermaid, img').forEach(el => {
@@ -994,28 +1664,78 @@
     });
 
     currentSlideIndex = 0;
+    currentFragmentIndex = 0;
     showSlide(0);
 
     totalSlidesEl.textContent = slides.length;
+    totalSlidesPresenter.textContent = slides.length;
+  }
+
+  function stripHtml(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
   }
 
   function showSlide(index) {
     const slideElements = document.querySelectorAll('.slide');
+    const overviewSlides = document.querySelectorAll('.overview-slide');
 
     if (index < 0) index = 0;
     if (index >= slideElements.length) index = slideElements.length - 1;
 
-    slideElements.forEach((slide, i) => {
-      slide.classList.remove('active');
-      if (i === index) {
-        slide.classList.add('active');
+    // Animate transition
+    if (index > currentSlideIndex) {
+      slideElements[currentSlideIndex].classList.add('prev');
+    }
+
+    setTimeout(() => {
+      slideElements.forEach((slide, i) => {
+        slide.classList.remove('active', 'prev');
+        if (i === index) {
+          slide.classList.add('active');
+        }
+      });
+
+      overviewSlides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        if (i === index) {
+          slide.classList.add('active');
+        }
+      });
+
+      currentSlideIndex = index;
+      currentFragmentIndex = 0;
+      showFragments();
+
+      currentSlideEl.textContent = index + 1;
+      slideTitleEl.textContent = slides[index]?.title || 'Slide';
+      progressFillEl.style.width = `${((index + 1) / slides.length) * 100}%`;
+
+      // Update presenter view
+      if (isPresenterMode) {
+        updatePresenterView();
+      }
+
+      playSound('slide');
+    }, 50);
+
+    updateNavigationButtons();
+  }
+
+  function showFragments() {
+    const currentSlide = document.querySelectorAll('.slide')[currentSlideIndex];
+    if (!currentSlide) return;
+
+    const fragmentElements = currentSlide.querySelectorAll('.fragment');
+    fragments[currentSlideIndex] = fragmentElements;
+
+    fragmentElements.forEach((el, index) => {
+      el.classList.remove('visible', 'current-fragment');
+      if (index <= currentFragmentIndex) {
+        el.classList.add('visible');
       }
     });
-
-    currentSlideIndex = index;
-    currentSlideEl.textContent = index + 1;
-    slideTitleEl.textContent = slides[index]?.title || 'Slide';
-    progressFillEl.style.width = `${((index + 1) / slides.length) * 100}%`;
   }
 
   function navigateSlide(direction) {
@@ -1023,6 +1743,11 @@
     if (newIndex >= 0 && newIndex < slides.length) {
       showSlide(newIndex);
     }
+  }
+
+  function updateNavigationButtons() {
+    prevSlideBtn.disabled = currentSlideIndex === 0;
+    nextSlideBtn.disabled = currentSlideIndex === slides.length - 1;
   }
 
   function openFullscreen(element) {
@@ -1036,7 +1761,54 @@
 
   function closeFullscreen() {
     fullscreenModal.classList.remove('active');
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function togglePresenterMode() {
+    isPresenterMode = !isPresenterMode;
+    presenterMode.classList.toggle('active');
+    btnPresenter.classList.toggle('active');
+
+    if (isPresenterMode) {
+      updatePresenterView();
+    }
+
+    playSound('click');
+  }
+
+  function updatePresenterView() {
+    const currentSlideEl = document.querySelectorAll('.slide')[currentSlideIndex];
+    const nextSlideEl = document.querySelectorAll('.slide')[currentSlideIndex + 1];
+
+    currentSlidePreview.innerHTML = currentSlideEl.innerHTML;
+    if (nextSlideEl) {
+      nextSlidePreview.innerHTML = nextSlideEl.innerHTML;
+    } else {
+      nextSlidePreview.innerHTML = '<p>Não há próximo slide</p>';
+    }
+
+    speakerNotesEl.textContent = slides[currentSlideIndex].speakerNotes;
+    currentSlidePresenter.textContent = currentSlideIndex + 1;
+  }
+
+  function toggleOverview() {
+    isOverviewMode = !isOverviewMode;
+    overviewMode.classList.toggle('active');
+    btnOverview.classList.toggle('active');
+    playSound('click');
+  }
+
+  function openJump() {
+    isJumpMode = true;
+    jumpToSlide.classList.add('active');
+    jumpInput.value = '';
+    jumpInput.focus();
+    playSound('open');
+  }
+
+  function closeJump() {
+    isJumpMode = false;
+    jumpToSlide.classList.remove('active');
   }
 
   function toggleFullscreen() {
@@ -1045,21 +1817,116 @@
     } else {
       document.exitFullscreen();
     }
+    playSound('click');
   }
 
-  function toggleOverview() {
-    alert(`Visão Geral:\n\n${slides.map((s, i) => `${i + 1}. ${s.title}`).join('\n')}`);
+  function toggleBlackout() {
+    isBlackout = !isBlackout;
+    blackout.classList.toggle('active');
+    playSound('blackout');
+  }
+
+  function enterZoom(x, y) {
+    isZoomMode = true;
+    zoomOverlay.classList.add('active');
+    spotlight.style.left = x - 100 + 'px';
+    spotlight.style.top = y - 100 + 'px';
+    playSound('zoom');
+  }
+
+  function exitZoom() {
+    isZoomMode = false;
+    zoomOverlay.classList.remove('active');
+  }
+
+  function toggleSound() {
+    soundEnabled = !soundEnabled;
+    soundToggle.classList.toggle('muted');
+    soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
   }
 
   function showHelp() {
-    alert(`📚 ATALHOS DO TECLADO:\n\n` +
+    alert(`📚 ATALHOS COMPLETOS:\n\n` +
+          `NAVEGAÇÃO:\n` +
           `→ ou SPACE: Próximo slide\n` +
           `← : Slide anterior\n` +
+          `J: Pular para slide\n\n` +
+          `MODOS:\n` +
+          `S: Modo apresentador\n` +
+          `O: Overview (grade)\n` +
           `F: Tela cheia\n` +
-          `G: Visão geral\n` +
+          `B: Blackout (esconder slides)\n\n` +
+          `INTERAÇÃO:\n` +
+          `Alt+Click: Zoom elemento\n` +
           `?: Ajuda\n` +
-          `ESC: Sair do modo tela cheia\n\n` +
-          `💡 Clique em diagramas para visualizar em tela cheia!`);
+          `ESC: Sair do modo atual\n\n` +
+          `💡 Clique nos diagramas para tela cheia!\n` +
+          `📱 Deslize para navegar no mobile!`);
+    playSound('click');
+  }
+
+  function startTimer() {
+    startTime = Date.now();
+    timerInterval = setInterval(updateTimer, 1000);
+  }
+
+  function updateTimer() {
+    const elapsed = Date.now() - startTime;
+    const minutes = Math.floor(elapsed / 60000);
+    const seconds = Math.floor((elapsed % 60000) / 1000);
+    timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+    // Warning colors
+    if (minutes >= 45) {
+      timerEl.className = 'timer danger';
+    } else if (minutes >= 30) {
+      timerEl.className = 'timer warning';
+    } else {
+      timerEl.className = 'timer';
+    }
+  }
+
+  function playSound(type) {
+    if (!soundEnabled) return;
+
+    // Create simple beep sounds
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    switch (type) {
+      case 'slide':
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        break;
+      case 'click':
+        oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+        break;
+      case 'open':
+        oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+        break;
+      case 'zoom':
+        oscillator.frequency.setValueAtTime(1000, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        break;
+      case 'blackout':
+        oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        break;
+    }
+
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.3);
   }
 
   async function renderMermaid(root) {
@@ -1068,7 +1935,7 @@
       const graphDef = codeEl.textContent;
       const pre = codeEl.closest('pre');
       const container = document.createElement('div');
-      container.className = 'mermaid';
+      container.className = 'mermaid fragment';
       container.textContent = graphDef;
       pre.parentNode.replaceChild(container, pre);
     }
@@ -1086,14 +1953,25 @@
       img.loading = 'lazy';
       img.alt = 'PlantUML diagram';
       img.src = PLANTUML_SERVER + deflated;
+      img.className = 'fragment';
 
       const pre = codeEl.closest('pre');
       pre.parentNode.replaceChild(img, pre);
     }
   }
 
+  // Add fragments to lists and other elements
+  function addFragments() {
+    document.querySelectorAll('.slide li').forEach(li => {
+      li.classList.add('fragment');
+    });
+  }
+
   // Load initial document
   loadAndRender(DEFAULT_MD);
+
+  // Add fragments after initial load
+  setTimeout(addFragments, 1000);
 </script>
 </body>
 </html>
